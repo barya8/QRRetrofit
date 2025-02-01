@@ -2,7 +2,7 @@ plugins {
     id 'com.android.library'
     id 'maven-publish' // Required for JitPack
 }
-//
+
 android {
     namespace 'com.example.qrretrofit'
     compileSdk 34
@@ -40,7 +40,7 @@ afterEvaluate {
                 artifact(bundleReleaseAar)
 
                 pom {
-                    name = "QRCodes"
+                    name = "QRRetrofit"
                     description = "A QR code scanning library with Retrofit support."
                     url = "https://github.com/barya8/QRRetrofit" // GitHub repo link
 
