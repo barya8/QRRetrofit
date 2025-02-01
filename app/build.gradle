@@ -1,0 +1,82 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish' // Required for JitPack
+}
+
+android {
+    namespace 'com.example.qrretrofit'
+    compileSdk 34
+
+    defaultConfig {
+        //applicationId "com.example.qrretrofit"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+        consumerProguardFiles 'consumer-rules.pro' // Needed for libraries
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "com.github.barya8" // Replace with your GitHub username
+                artifactId = "QRCodes" // Your library name
+                version = "1.0.0"
+
+                artifact(bundleReleaseAar)
+
+                pom {
+                    name = "QRCodes"
+                    description = "A QR code scanning library with Retrofit support."
+                    url = "https://github.com/barya8/QRRetrofit" // GitHub repo link
+
+                    licenses {
+                        license {
+                            name = "MIT License"
+                            url = "https://opensource.org/licenses/MIT"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = "barya8"
+                            name = "Your Name"
+                            email = "your.email@example.com"
+                        }
+                    }
+
+                    scm {
+                        url = "https://github.com/barya8/QRRetrofit"
+                        connection = "scm:git:github.com/barya8/QRRetrofit.git"
+                        developerConnection = "scm:git:ssh://github.com:barya8/QRRetrofit.git"
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
