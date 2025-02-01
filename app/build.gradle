@@ -34,7 +34,7 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 groupId = "com.github.barya8" // Replace with your GitHub username
-                artifactId = "QRCodes" // Your library name
+                artifactId = "QRRetrofit" // Your library name
                 version = "1.0.0"
 
                 artifact(bundleReleaseAar)
