@@ -2,7 +2,7 @@ plugins {
     id 'com.android.library'
     id 'maven-publish' // Required for JitPack
 }
-
+//
 android {
     namespace 'com.example.qrretrofit'
     compileSdk 34
