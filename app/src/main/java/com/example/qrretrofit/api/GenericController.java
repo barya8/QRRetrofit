@@ -3,9 +3,7 @@ package com.example.qrretrofit.api;
 import com.example.qrretrofit.interfaces.GenericCallback;
 import com.example.qrretrofit.interfaces.GenericService;
 import com.example.qrretrofit.interfaces.GenericService2;
-import com.example.qrretrofit.model.ApiResponse;
 import com.example.qrretrofit.model.Item;
-import com.example.qrretrofit.model.ServiceResult;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -46,42 +44,6 @@ public class GenericController {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                    genericCallback.error(throwable.getMessage());
-                }
-            };
-
-    Callback<ApiResponse> apiResponseCallback =
-            new Callback<ApiResponse>() {
-                @Override
-                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ApiResponse apiResponse = response.body();
-                        genericCallback.success(apiResponse.toString());
-                    } else {
-                        genericCallback.error("Error: " + response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ApiResponse> call, Throwable throwable) {
-                    genericCallback.error(throwable.getMessage());
-                }
-            };
-
-    Callback<ServiceResult> serviceResultCallback =
-            new Callback<ServiceResult>() {
-                @Override
-                public void onResponse(Call<ServiceResult> call, Response<ServiceResult> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ServiceResult result = response.body();
-                        genericCallback.success(String.valueOf(result));
-                    } else {
-                        genericCallback.error("Error: " + response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ServiceResult> call, Throwable throwable) {
                     genericCallback.error(throwable.getMessage());
                 }
             };
@@ -151,23 +113,23 @@ public class GenericController {
     // New Methods for GenericService2
 
     public void getAllDataImpl(String apiKey) {
-        Call<ApiResponse> call = genericService2.getAllData(apiKey);
-        call.enqueue(apiResponseCallback);
+        Call<ResponseBody> call = genericService2.getAllData(apiKey);
+        call.enqueue(responseBodyCallback);
     }
 
     public void getDataByClientImpl(String apiKey) {
-        Call<ApiResponse> call = genericService2.getDataByClient(apiKey);
-        call.enqueue(apiResponseCallback);
+        Call<ResponseBody> call = genericService2.getDataByClient(apiKey);
+        call.enqueue(responseBodyCallback);
     }
 
     public void deleteQrByIdImpl(String apiKey, Integer id) {
-        Call<ServiceResult> call = genericService2.deleteQrById(apiKey, id);
-        call.enqueue(serviceResultCallback);
+        Call<ResponseBody> call = genericService2.deleteQrById(apiKey, id);
+        call.enqueue(responseBodyCallback);
     }
 
     public void deleteAllImpl(String apiKey) {
-        Call<ServiceResult> call = genericService2.deleteAll(apiKey);
-        call.enqueue(serviceResultCallback);
+        Call<ResponseBody> call = genericService2.deleteAll(apiKey);
+        call.enqueue(responseBodyCallback);
     }
 
     public void generateQRCodeImpl(String apiKey, Map<String, String> params) {
@@ -181,18 +143,18 @@ public class GenericController {
     }
 
     public void updateQrByIdImpl(String apiKey, Integer id) {
-        Call<ServiceResult> call = genericService2.updateQrById(apiKey, id);
-        call.enqueue(serviceResultCallback);
+        Call<ResponseBody> call = genericService2.updateQrById(apiKey, id);
+        call.enqueue(responseBodyCallback);
     }
 
     public void scanQRCodeImpl(String apiKey, MultipartBody.Part file) {
-        Call<ServiceResult> call = genericService2.scanQRCode(apiKey, file);
-        call.enqueue(serviceResultCallback);
+        Call<ResponseBody> call = genericService2.scanQRCode(apiKey, file);
+        call.enqueue(responseBodyCallback);
     }
 
     public void scanBarcodeImpl(String apiKey, MultipartBody.Part file) {
-        Call<ServiceResult> call = genericService2.scanBarcode(apiKey, file);
-        call.enqueue(serviceResultCallback);
+        Call<ResponseBody> call = genericService2.scanBarcode(apiKey, file);
+        call.enqueue(responseBodyCallback);
     }
 
 
