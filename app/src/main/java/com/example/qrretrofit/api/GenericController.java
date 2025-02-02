@@ -111,6 +111,7 @@ public class GenericController {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         genericService = retrofit.create(GenericService.class);
+        genericService2 = retrofit.create(GenericService2.class);
     }
 
 
