@@ -25,28 +25,37 @@ public class GenericController {
     private GenericService genericService;
     private GenericService2 genericService2;
 
-    Callback<ResponseBody> responseBodyCallback =
-            new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        try {
-                            String data = response.body().string();
-                            genericCallback.success(data);
-                        } catch (IOException e) {
-                            genericCallback.error(response.errorBody().toString());
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        genericCallback.error(response.errorBody().toString());
-                    }
+    Callback<ResponseBody> responseBodyCallback = new Callback<ResponseBody>() {
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            if (response.isSuccessful()) {
+                try {
+                    // Convert the successful response body to a string
+                    String data = response.body().string();
+                    genericCallback.success(data);
+                } catch (IOException e) {
+                    // Handle the exception if reading the response fails
+                    genericCallback.error("Error reading the response body: " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
+            } else {
+                try {
+                    // If response is not successful, extract the error body
+                    String error = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                    genericCallback.error(error);
+                } catch (IOException e) {
+                    // Handle any issues reading the error body
+                    genericCallback.error("Error reading the error body: " + e.getMessage());
+                }
+            }
+        }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                    genericCallback.error(throwable.getMessage());
-                }
-            };
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+            // Handle any errors that occur while making the request
+            genericCallback.error("Network failure: " + throwable.getMessage());
+        }
+    };
 
 
     Callback<Void> voidCallback =
