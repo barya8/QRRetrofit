@@ -34,7 +34,7 @@ public interface GenericService2 {
     Call<ResponseBody> generateBarcode(@Header("x-api-key") String apiKey, @QueryMap Map<String, String> params);
 
     @PUT("/api/barcodes/updateQrById")
-    Call<ResponseBody> updateQrById(@Header("x-api-key") String apiKey, @Query("id") Integer id);
+    Call<ResponseBody> updateQrById(@Header("x-api-key") String apiKey,  @QueryMap Map<String, String> params);
 
     @POST("/api/barcodes/read")
     Call<ResponseBody> scanQRCode(@Header("x-api-key") String apiKey, @Part MultipartBody.Part file);

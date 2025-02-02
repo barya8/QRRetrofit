@@ -151,8 +151,8 @@ public class GenericController {
         call.enqueue(responseBodyCallback);
     }
 
-    public void updateQrByIdImpl(String apiKey, Integer id) {
-        Call<ResponseBody> call = genericService2.updateQrById(apiKey, id);
+    public void updateQrByIdImpl(String apiKey, Map<String, String> params) {
+        Call<ResponseBody> call = genericService2.updateQrById(apiKey, params);
         call.enqueue(responseBodyCallback);
     }
 
