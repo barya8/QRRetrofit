@@ -133,9 +133,28 @@ public class GenericController {
         call.enqueue(responseBodyCallback);
     }
 
-    public void deleteQrByIdImpl(String apiKey, Integer id) {
+    public void deleteQrByIdImpl(String apiKey, Integer id, GenericCallback callback) {
         Call<ResponseBody> call = genericService2.deleteQrById(apiKey, id);
-        call.enqueue(responseBodyCallback);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    callback.success(response.toString());
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        callback.error("Server error: " + response.code() + " - " + errorBody);
+                    } catch (IOException e) {
+                        callback.error("Server error: " + response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                callback.error("Network error: " + t.getMessage()); // Call onError for network errors
+            }
+        });
     }
 
     public void deleteAllImpl(String apiKey) {
@@ -231,4 +250,5 @@ public class GenericController {
             }
         });
     }
+
 }
