@@ -1,5 +1,7 @@
 package com.example.qrretrofit.api;
 
+import android.util.Log;
+
 import com.example.qrretrofit.interfaces.GenericCallback;
 import com.example.qrretrofit.interfaces.GenericService;
 import com.example.qrretrofit.interfaces.GenericService2;
@@ -157,7 +159,7 @@ public class GenericController {
     }
 
     public void scanQRCodeImpl(String apiKey, MultipartBody.Part file) {
-        Call<ResponseBody> call = genericService2.scanQRCode(apiKey, file);
+        Call<ResponseBody> call = genericService2.scanReadParams(apiKey, file);
         call.enqueue(responseBodyCallback);
     }
 
@@ -166,5 +168,67 @@ public class GenericController {
         call.enqueue(responseBodyCallback);
     }
 
+    // General method to handle API call for both barcode and QR code
+    public void scanBarcodeOrQRCode(String apiKey, MultipartBody.Part file, boolean isValid, final GenericCallback callback) {
+        if (isValid) {
+            // First, call the barcode scan if isValid is true
+            Call<ResponseBody> call = genericService2.scanBarcode(apiKey, file);
 
+            // Enqueue the call for async handling
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        // Log for valid barcode scan success
+                        Log.d("API CALL", "Barcode scan successful: " + response.body().toString());
+
+                        // Barcode scan was successful, now proceed to code in table
+                        callback.success(response.body().toString());
+
+                        // Now do the QR scan (using the same file)
+                        proceedWithQRCode(apiKey, file, callback); // QR code is scanned after barcode is successful
+
+                    } else {
+                        // Log for barcode scan failure
+                        Log.d("API CALL", "Barcode scan failed: " + response.code());
+                        callback.error("Request failed with status code: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    // Log for network failure
+                    Log.e("API CALL", "Error during barcode scan: " + t.getMessage());
+                    callback.error("Error: " + t.getMessage());
+                }
+            });
+        }
+    }
+
+    // Method to handle QR code scanning after barcode scan is successful
+    private void proceedWithQRCode(String apiKey, MultipartBody.Part file, final GenericCallback callback) {
+        Call<ResponseBody> qrCall = genericService2.scanReadParams(apiKey, file);
+
+        qrCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    // Log for QR code scan success
+                    Log.d("API CALL", "QR Code scan successful: " + response.body().toString());
+                    callback.success("QR Code Scan Successful: " + response.body().toString());
+                } else {
+                    // Log for QR code scan failure
+                    Log.d("API CALL", "QR Code scan failed: " + response.code());
+                    callback.error("QR Code scan failed with status code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Log for network failure
+                Log.e("API CALL", "Error during QR Code scan: " + t.getMessage());
+                callback.error("QR Code Scan Error: " + t.getMessage());
+            }
+        });
+    }
 }
