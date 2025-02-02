@@ -8,6 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -35,11 +36,12 @@ public interface GenericService2 {
 
     @PUT("/api/barcodes/updateQrById")
     Call<ResponseBody> updateQrById(@Header("x-api-key") String apiKey,  @QueryMap Map<String, String> params);
-
+    @Multipart
     @POST("/api/barcodes/read")
     Call<ResponseBody> scanQRCode(@Header("x-api-key") String apiKey, @Part MultipartBody.Part file);
 
-    @POST("/api/barcodes/qrcode/chcek")
+    @Multipart
+    @POST("/api/barcodes/qrcode/check")
     Call<ResponseBody> scanBarcode(@Header("x-api-key") String apiKey, @Part MultipartBody.Part file);
 }
 
