@@ -59,6 +59,39 @@ public class GenericController {
         }
     };
 
+    private Callback<ResponseBody> createResponseBodyCallback(final GenericCallback genericCallback) {
+        return new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        // Convert the successful response body to a string
+                        String data = response.body().string();
+                        genericCallback.success(data);
+                    } catch (IOException e) {
+                        // Handle the exception if reading the response fails
+                        genericCallback.error("Error reading the response body: " + e.getMessage());
+                    }
+                } else {
+                    try {
+                        // If response is not successful, extract the error body
+                        String error = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                        genericCallback.error(error);
+                    } catch (IOException e) {
+                        // Handle any issues reading the error body
+                        genericCallback.error("Error reading the error body: " + e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                // Handle any errors that occur while making the request
+                genericCallback.error("Network failure: " + throwable.getMessage());
+            }
+        };
+    }
+
 
     Callback<Void> voidCallback =
             new Callback<Void>() {
@@ -132,6 +165,10 @@ public class GenericController {
         Call<ResponseBody> call = genericService2.getDataByClient(apiKey);
         call.enqueue(responseBodyCallback);
     }
+    public void getDataByClientImpl(String apiKey, final GenericCallback callback) {
+        Call<ResponseBody> call = genericService2.getDataByClient(apiKey);
+        call.enqueue(createResponseBodyCallback(callback));
+    }
 
     public void deleteQrByIdImpl(String apiKey, Integer id, GenericCallback callback) {
         Call<ResponseBody> call = genericService2.deleteQrById(apiKey, id);
@@ -176,15 +213,27 @@ public class GenericController {
         Call<ResponseBody> call = genericService2.updateQrById(apiKey, params);
         call.enqueue(responseBodyCallback);
     }
+    public void updateQrByIdImpl(String apiKey, Map<String, String> params, final GenericCallback callback) {
+        Call<ResponseBody> call = genericService2.updateQrById(apiKey, params);
+        call.enqueue(createResponseBodyCallback(callback));
+    }
 
     public void scanQRCodeImpl(String apiKey, MultipartBody.Part file) {
         Call<ResponseBody> call = genericService2.scanReadParams(apiKey, file);
         call.enqueue(responseBodyCallback);
     }
+    public void scanQRCodeImpl(String apiKey, MultipartBody.Part file,final GenericCallback callback) {
+        Call<ResponseBody> call = genericService2.scanReadParams(apiKey, file);
+        call.enqueue(createResponseBodyCallback(callback));
+    }
 
     public void scanBarcodeImpl(String apiKey, MultipartBody.Part file) {
         Call<ResponseBody> call = genericService2.scanBarcode(apiKey, file);
         call.enqueue(responseBodyCallback);
+    }
+    public void scanBarcodeImpl(String apiKey, MultipartBody.Part file, final GenericCallback callback) {
+        Call<ResponseBody> call = genericService2.scanBarcode(apiKey, file);
+        call.enqueue(createResponseBodyCallback(callback));
     }
 
     // General method to handle API call for both barcode and QR code
